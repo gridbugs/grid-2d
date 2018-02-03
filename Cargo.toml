@@ -1,0 +1,14 @@
+[package]
+name = "grid_2d"
+description = "A general purpose 2d grid"
+version = "0.1.0"
+authors = ["Stephen Sherratt <sfsherratt@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/stevebob/grid-2d.git"
+repository = "https://github.com/stevebob/grid-2d.git"
+documentation = "https://docs.rs/grid_2d"
+
+[dependencies]
+serde = "1.0"
+serde_derive = "1.0"
