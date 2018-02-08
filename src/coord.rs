@@ -94,6 +94,12 @@ impl<T: Into<Coord>> ::std::ops::Add<T> for Coord {
     }
 }
 
+impl<T: Into<Coord>> ::std::ops::AddAssign<T> for Coord {
+    fn add_assign(&mut self, rhs: T) {
+        *self = *self + rhs;
+    }
+}
+
 impl<T: Into<Size>> ::std::ops::Add<T> for Size {
     type Output = Size;
     fn add(self, rhs: T) -> Self::Output {
@@ -127,6 +133,12 @@ impl<T: Into<Coord>> ::std::ops::Sub<T> for Coord {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
         }
+    }
+}
+
+impl<T: Into<Coord>> ::std::ops::SubAssign<T> for Coord {
+    fn sub_assign(&mut self, rhs: T) {
+        *self = *self - rhs;
     }
 }
 
