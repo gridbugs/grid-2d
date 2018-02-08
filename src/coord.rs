@@ -38,10 +38,14 @@ impl Size {
     }
 
     /// Returns the width.
-    pub fn x(&self) -> u32 { self.x }
+    pub fn x(&self) -> u32 {
+        self.x
+    }
 
     /// Returns the height.
-    pub fn y(&self) -> u32 { self.y }
+    pub fn y(&self) -> u32 {
+        self.y
+    }
 
     /// Returns an iterator over all the coordinates within
     /// a rectangle of this size.
