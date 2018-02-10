@@ -18,9 +18,9 @@ impl<'a, T> CoordEnumerate<'a, T> {
 impl<'a, T> Iterator for CoordEnumerate<'a, T> {
     type Item = (Coord, &'a T);
     fn next(&mut self) -> Option<Self::Item> {
-        self.coords.next().and_then(
-            |c| self.iter.next().map(|t| (c, t)),
-        )
+        self.coords
+            .next()
+            .and_then(|c| self.iter.next().map(|t| (c, t)))
     }
 }
 
@@ -38,9 +38,9 @@ impl<'a, T> CoordEnumerateMut<'a, T> {
 impl<'a, T> Iterator for CoordEnumerateMut<'a, T> {
     type Item = (Coord, &'a mut T);
     fn next(&mut self) -> Option<Self::Item> {
-        self.coords.next().and_then(
-            |c| self.iter.next().map(|t| (c, t)),
-        )
+        self.coords
+            .next()
+            .and_then(|c| self.iter.next().map(|t| (c, t)))
     }
 }
 
@@ -99,9 +99,8 @@ impl<T> Grid<T> {
     }
 
     pub fn get(&self, coord: Coord) -> Option<&T> {
-        self.coord_to_index(coord).and_then(
-            |index| self.cells.get(index),
-        )
+        self.coord_to_index(coord)
+            .and_then(|index| self.cells.get(index))
     }
 
     pub fn get_mut(&mut self, coord: Coord) -> Option<&mut T> {
