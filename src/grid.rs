@@ -58,6 +58,20 @@ impl<T> Grid<T> {
         }
     }
 
+    pub fn new_from_fn<F>(width: u32, height: u32, f: F) -> Self
+    where
+        F: Fn(Coord) -> T,
+    {
+        let mut grid = Grid::new_uninitialised(width, height);
+        for i in 0..height {
+            for j in 0..width {
+                let coord = Coord::new(j as i32, i as i32);
+                grid.cells.push(f(coord));
+            }
+        }
+        grid
+    }
+
     pub fn width(&self) -> u32 {
         self.size.x()
     }
