@@ -51,23 +51,20 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-    fn new_uninitialised(width: u32, height: u32) -> Self {
+    fn new_uninitialised(size: Size) -> Self {
         Self {
-            size: Size::new(width, height),
-            cells: Vec::with_capacity((width * height) as usize),
+            size,
+            cells: Vec::with_capacity(size.count()),
         }
     }
 
-    pub fn new_from_fn<F>(width: u32, height: u32, f: F) -> Self
+    pub fn new_from_fn<F>(size: Size, f: F) -> Self
     where
         F: Fn(Coord) -> T,
     {
-        let mut grid = Grid::new_uninitialised(width, height);
-        for i in 0..height {
-            for j in 0..width {
-                let coord = Coord::new(j as i32, i as i32);
-                grid.cells.push(f(coord));
-            }
+        let mut grid = Grid::new_uninitialised(size);
+        for coord in size.coords() {
+            grid.cells.push(f(coord));
         }
         grid
     }
@@ -127,19 +124,17 @@ impl<T> Grid<T> {
 }
 
 impl<T: Copy> Grid<T> {
-    pub fn new_copy(width: u32, height: u32, value: T) -> Self {
-        let mut grid = Grid::new_uninitialised(width, height);
-        let size = grid.len();
-        grid.cells.resize(size, value);
+    pub fn new_copy(size: Size, value: T) -> Self {
+        let mut grid = Grid::new_uninitialised(size);
+        grid.cells.resize(size.count(), value);
         grid
     }
 }
 
 impl<T: Default> Grid<T> {
-    pub fn new_default(width: u32, height: u32) -> Self {
-        let mut grid = Grid::new_uninitialised(width, height);
-        let size = grid.len();
-        for _ in 0..size {
+    pub fn new_default(size: Size) -> Self {
+        let mut grid = Grid::new_uninitialised(size);
+        for _ in 0..size.count() {
             grid.cells.push(Default::default());
         }
         grid
@@ -147,13 +142,10 @@ impl<T: Default> Grid<T> {
 }
 
 impl<T: From<Coord>> Grid<T> {
-    pub fn new_from_coord(width: u32, height: u32) -> Self {
-        let mut grid = Grid::new_uninitialised(width, height);
-        for i in 0..height {
-            for j in 0..width {
-                let coord = Coord::new(j as i32, i as i32);
-                grid.cells.push(From::from(coord));
-            }
+    pub fn new_from_coord(size: Size) -> Self {
+        let mut grid = Grid::new_uninitialised(size);
+        for coord in size.coords() {
+            grid.cells.push(From::from(coord));
         }
         grid
     }
