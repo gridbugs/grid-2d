@@ -74,6 +74,18 @@ impl Size {
         Some((y * self.x + x) as usize)
     }
 
+    pub fn coord(&self, index: usize) -> Option<Coord> {
+        let y = index / self.x as usize;
+
+        if y >= self.y as usize {
+            return None;
+        }
+
+        let x = index % self.x as usize;
+
+        Some(Coord::new(x as i32, y as i32))
+    }
+
     /// Return the number of cells in a 2D grid of this size.
     pub fn count(&self) -> usize {
         (self.x * self.y) as usize
@@ -203,5 +215,20 @@ impl Iterator for CoordIter {
         }
 
         Some(coord)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::{Size, Coord};
+
+    #[test]
+    fn coord_to_index() {
+        let size = Size::new(4, 3);
+
+        assert_eq!(size.coord(12), None);
+        assert_eq!(size.coord(11), Some(Coord::new(3, 2)));
+        assert_eq!(size.coord(0), Some(Coord::new(0, 0)));
+        assert_eq!(size.index(Coord::new(0, 0)), Some(0));
     }
 }
