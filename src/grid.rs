@@ -123,11 +123,20 @@ impl<T> Grid<T> {
     }
 }
 
-impl<T: Copy> Grid<T> {
-    pub fn new_copy(size: Size, value: T) -> Self {
+impl<T: Clone> Grid<T> {
+    pub fn new_clone(size: Size, value: T) -> Self {
         let mut grid = Grid::new_uninitialised(size);
         grid.cells.resize(size.count(), value);
         grid
+    }
+    pub fn reset_clone(&mut self, value: T) {
+        self.cells.clear();
+        self.cells.resize(self.size.count(), value);
+    }
+    pub fn resize_clone(&mut self, size: Size, value: T) {
+        self.cells.clear();
+        self.cells.resize(size.count(), value);
+        self.size = size;
     }
 }
 
@@ -138,6 +147,18 @@ impl<T: Default> Grid<T> {
             grid.cells.push(Default::default());
         }
         grid
+    }
+}
+
+impl<T: Default + Clone> Grid<T> {
+    pub fn reset_default(&mut self) {
+        self.cells.clear();
+        self.cells.resize(self.size.count(), Default::default());
+    }
+    pub fn resize_default(&mut self, size: Size) {
+        self.cells.clear();
+        self.cells.resize(size.count(), Default::default());
+        self.size = size;
     }
 }
 
