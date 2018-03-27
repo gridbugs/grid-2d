@@ -99,89 +99,6 @@ impl<T: Into<[u32; 2]>> From<T> for Size {
     }
 }
 
-impl<T: Into<Coord>> ::std::ops::Add<T> for Coord {
-    type Output = Coord;
-    fn add(self, rhs: T) -> Self::Output {
-        let rhs = rhs.into();
-        Coord {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-
-impl<T: Into<Coord>> ::std::ops::AddAssign<T> for Coord {
-    fn add_assign(&mut self, rhs: T) {
-        *self = *self + rhs;
-    }
-}
-
-impl<T: Into<Size>> ::std::ops::Add<T> for Size {
-    type Output = Size;
-    fn add(self, rhs: T) -> Self::Output {
-        let rhs = rhs.into();
-        Size::new(self.x + rhs.x, self.y + rhs.y)
-    }
-}
-
-impl ::std::ops::Add<Size> for Coord {
-    type Output = Coord;
-    fn add(self, rhs: Size) -> Self::Output {
-        Coord {
-            x: self.x + rhs.x as i32,
-            y: self.y + rhs.y as i32,
-        }
-    }
-}
-
-impl ::std::ops::Add<Coord> for Size {
-    type Output = Coord;
-    fn add(self, rhs: Coord) -> Self::Output {
-        rhs + self
-    }
-}
-
-impl<T: Into<Coord>> ::std::ops::Sub<T> for Coord {
-    type Output = Coord;
-    fn sub(self, rhs: T) -> Self::Output {
-        let rhs = rhs.into();
-        Coord {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
-    }
-}
-
-impl<T: Into<Coord>> ::std::ops::SubAssign<T> for Coord {
-    fn sub_assign(&mut self, rhs: T) {
-        *self = *self - rhs;
-    }
-}
-
-impl<T: Into<Size>> ::std::ops::Sub<T> for Size {
-    type Output = Size;
-    fn sub(self, rhs: T) -> Self::Output {
-        let rhs = rhs.into();
-        Size::new(self.x - rhs.x, self.y - rhs.y)
-    }
-}
-
-impl ::std::ops::Sub<Size> for Coord {
-    type Output = Coord;
-    fn sub(self, rhs: Size) -> Self::Output {
-        Coord {
-            x: self.x - rhs.x as i32,
-            y: self.y - rhs.y as i32,
-        }
-    }
-}
-
-impl ::std::ops::Sub<Coord> for Size {
-    type Output = Coord;
-    fn sub(self, rhs: Coord) -> Self::Output {
-        rhs - self
-    }
-}
 
 /// Iterates over all the coordinates in a grid from
 /// top to bottom, and left to right within each row.
@@ -220,7 +137,7 @@ impl Iterator for CoordIter {
 
 #[cfg(test)]
 mod test {
-    use super::{Size, Coord};
+    use super::{Coord, Size};
 
     #[test]
     fn coord_to_index() {
