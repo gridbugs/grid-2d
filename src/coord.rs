@@ -11,9 +11,14 @@ impl Coord {
     }
 }
 
-impl<T: Into<[i32; 2]>> From<T> for Coord {
-    fn from(t: T) -> Self {
-        let array = t.into();
+impl From<(i32, i32)> for Coord {
+    fn from((x, y): (i32, i32)) -> Self {
+        Coord::new(x, y)
+    }
+}
+
+impl From<[i32; 2]> for Coord {
+    fn from(array: [i32; 2]) -> Self {
         Coord::new(array[0], array[1])
     }
 }
@@ -92,13 +97,17 @@ impl Size {
     }
 }
 
-impl<T: Into<[u32; 2]>> From<T> for Size {
-    fn from(t: T) -> Self {
-        let array = t.into();
-        Size::new(array[0], array[1])
+impl From<(u32, u32)> for Size {
+    fn from((x, y): (u32, u32)) -> Self {
+        Size::new(x, y)
     }
 }
 
+impl From<[u32; 2]> for Size {
+    fn from(array: [u32; 2]) -> Self {
+        Size::new(array[0], array[1])
+    }
+}
 
 /// Iterates over all the coordinates in a grid from
 /// top to bottom, and left to right within each row.
