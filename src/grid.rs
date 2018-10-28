@@ -1,5 +1,5 @@
 use std::slice;
-use coord::*;
+use crate::coord::*;
 
 pub type Iter<'a, T> = slice::Iter<'a, T>;
 pub type IterMut<'a, T> = slice::IterMut<'a, T>;
@@ -44,7 +44,8 @@ impl<'a, T> Iterator for CoordEnumerateMut<'a, T> {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     size: Size,
     cells: Vec<T>,

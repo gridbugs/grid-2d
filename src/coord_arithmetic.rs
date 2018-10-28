@@ -1,5 +1,5 @@
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign};
-use coord::{Coord, Size};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use crate::coord::{Coord, Size};
 
 impl Add for Coord {
     type Output = Coord;
@@ -150,7 +150,8 @@ impl<'a, 'b> Add<&'a Size> for &'b Size {
 }
 
 impl<T> AddAssign<T> for Coord
-    where Coord: Add<T, Output=Coord>
+where
+    Coord: Add<T, Output = Coord>,
 {
     fn add_assign(&mut self, rhs: T) {
         *self = *self + rhs;
@@ -306,7 +307,8 @@ impl<'a, 'b> Sub<&'a Size> for &'b Size {
 }
 
 impl<T> SubAssign<T> for Coord
-    where Coord: Sub<T, Output=Coord>
+where
+    Coord: Sub<T, Output = Coord>,
 {
     fn sub_assign(&mut self, rhs: T) {
         *self = *self - rhs;
@@ -334,7 +336,8 @@ impl<'a> Mul<i32> for &'a Coord {
 }
 
 impl<T> MulAssign<T> for Coord
-    where Coord: Mul<T, Output=Coord>
+where
+    Coord: Mul<T, Output = Coord>,
 {
     fn mul_assign(&mut self, rhs: T) {
         *self = *self * rhs;
@@ -356,7 +359,8 @@ impl<'a> Mul<u32> for &'a Size {
 }
 
 impl<T> MulAssign<T> for Size
-    where Size: Mul<T, Output=Size>
+where
+    Size: Mul<T, Output = Size>,
 {
     fn mul_assign(&mut self, rhs: T) {
         *self = *self * rhs;
@@ -384,7 +388,8 @@ impl<'a> Div<i32> for &'a Coord {
 }
 
 impl<T> DivAssign<T> for Coord
-    where Coord: Div<T, Output=Coord>
+where
+    Coord: Div<T, Output = Coord>,
 {
     fn div_assign(&mut self, rhs: T) {
         *self = *self / rhs;
@@ -406,7 +411,8 @@ impl<'a> Div<u32> for &'a Size {
 }
 
 impl<T> DivAssign<T> for Size
-    where Size: Div<T, Output=Size>
+where
+    Size: Div<T, Output = Size>,
 {
     fn div_assign(&mut self, rhs: T) {
         *self = *self / rhs;

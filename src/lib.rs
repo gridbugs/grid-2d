@@ -1,6 +1,6 @@
-extern crate serde;
+#[cfg(feature = "serde")]
 #[macro_use]
-extern crate serde_derive;
+extern crate serde;
 
 mod grid;
 mod coord;
