@@ -1,5 +1,5 @@
+use coord::*;
 use std::slice;
-use crate::coord::*;
 
 pub type Iter<'a, T> = slice::Iter<'a, T>;
 pub type IterMut<'a, T> = slice::IterMut<'a, T>;

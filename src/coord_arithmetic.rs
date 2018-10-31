@@ -1,5 +1,5 @@
+use coord::{Coord, Size};
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
-use crate::coord::{Coord, Size};
 
 impl Add for Coord {
     type Output = Coord;
