@@ -1,4 +1,4 @@
-use coord::{Coord, Size};
+use coord_2d::{Coord, Size};
 
 /// A mapping from coordinate to position in the Vec backing the grid.
 /// Generally implementations will own the size of the grid.

@@ -1,4 +1,4 @@
-use coord::*;
+use coord_2d::*;
 use coord_system::*;
 use std::iter;
 use std::slice;
