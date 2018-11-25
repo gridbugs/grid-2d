@@ -1,6 +1,6 @@
 /// General purpose coordinate
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default, PartialOrd, Ord)]
 pub struct Coord {
     pub x: i32,
     pub y: i32,
@@ -9,6 +9,30 @@ pub struct Coord {
 impl Coord {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
+    }
+    fn normalize_part(value: i32, size: u32) -> i32 {
+        let value = value % size as i32;
+        if value < 0 {
+            value + size as i32
+        } else {
+            value
+        }
+    }
+    pub fn normalize(self, size: Size) -> Self {
+        Self {
+            x: Self::normalize_part(self.x, size.x()),
+            y: Self::normalize_part(self.y, size.y()),
+        }
+    }
+    pub fn is_valid(self, size: Size) -> bool {
+        if self.x < 0 || self.y < 0 {
+            return false;
+        }
+
+        let x = self.x as u32;
+        let y = self.y as u32;
+
+        x < size.x() && y < size.y()
     }
 }
 
@@ -27,7 +51,7 @@ impl From<[i32; 2]> for Coord {
 /// A size cannot be created which would contain un-addressable cells.
 /// That is, the maximum size has a width and height of one greater than the maximum `i32`.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Default, PartialOrd, Ord)]
 pub struct Size {
     x: u32,
     y: u32,
@@ -99,6 +123,14 @@ impl Size {
     }
 }
 
+impl IntoIterator for Size {
+    type Item = Coord;
+    type IntoIter = CoordIter;
+    fn into_iter(self) -> Self::IntoIter {
+        self.coords()
+    }
+}
+
 impl From<(u32, u32)> for Size {
     fn from((x, y): (u32, u32)) -> Self {
         Size::new(x, y)
@@ -158,5 +190,17 @@ mod test {
         assert_eq!(size.coord(11), Some(Coord::new(3, 2)));
         assert_eq!(size.coord(0), Some(Coord::new(0, 0)));
         assert_eq!(size.index(Coord::new(0, 0)), Some(0));
+    }
+
+    #[test]
+    fn normalize() {
+        assert_eq!(
+            Coord::new(5, 2).normalize(Size::new(2, 3)),
+            Coord::new(1, 2)
+        );
+        assert_eq!(
+            Coord::new(-4, 3).normalize(Size::new(3, 1)),
+            Coord::new(2, 0)
+        );
     }
 }

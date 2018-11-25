@@ -426,21 +426,21 @@ mod test {
     #[test]
     fn arithmetic() {
         let mut a = Coord::new(0, 0);
-        a + Coord::new(0, 0);
-        &a + Coord::new(0, 0);
-        a + &Coord::new(0, 0);
-        &a + &Coord::new(0, 0);
-        a + Size::new(0, 0);
-        &a + Size::new(0, 0);
-        a + &Size::new(0, 0);
-        &a + &Size::new(0, 0);
-        Size::new(0, 0) + a;
-        &Size::new(0, 0) + a;
-        Size::new(0, 0) + &a;
-        &Size::new(0, 0) + &a;
-        a += Size::new(0, 0);
-        a += Coord::new(0, 0);
-        a += &Size::new(0, 0);
-        a += &Coord::new(0, 0);
+        let _ = a + Coord::new(0, 0);
+        let _ = &a + Coord::new(0, 0);
+        let _ = a + &Coord::new(0, 0);
+        let _ = &a + &Coord::new(0, 0);
+        let _ = a + Size::new(0, 0);
+        let _ = &a + Size::new(0, 0);
+        let _ = a + &Size::new(0, 0);
+        let _ = &a + &Size::new(0, 0);
+        let _ = Size::new(0, 0) + a;
+        let _ = &Size::new(0, 0) + a;
+        let _ = Size::new(0, 0) + &a;
+        let _ = &Size::new(0, 0) + &a;
+        let _ = a += Size::new(0, 0);
+        let _ = a += Coord::new(0, 0);
+        let _ = a += &Size::new(0, 0);
+        let _ = a += &Coord::new(0, 0);
     }
 }

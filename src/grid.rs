@@ -45,7 +45,7 @@ impl<'a, T> Iterator for CoordEnumerateMut<'a, T> {
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct Grid<T> {
     size: Size,
     cells: Vec<T>,
