@@ -15,6 +15,18 @@ pub trait CoordSystem {
     /// `coord.is_valid(self.size())`.
     fn index(&self, coord: Coord) -> usize;
 
+    fn index_valid(&self, coord: Coord) -> Option<usize> {
+        if coord.is_valid(self.size()) {
+            Some(self.index(coord))
+        } else {
+            None
+        }
+    }
+
+    fn index_normalized(&self, coord: Coord) -> usize {
+        self.index(coord.normalize(self.size()))
+    }
+
     /// Returns an iterator over coords
     fn coord_iter(&self) -> Self::CoordIter;
 }
@@ -35,7 +47,8 @@ pub fn validate<C: CoordSystem>(coord_system: &C) {
 /// `CoordSystem` which starts in the top-left corner and traverses
 /// each row from top to bottom, traversing from left to right
 /// within each row.
-#[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct XThenY {
     size: Size,
 }
