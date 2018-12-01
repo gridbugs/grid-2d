@@ -11,4 +11,4 @@ documentation = "https://docs.rs/grid_2d"
 
 [dependencies]
 serde = { version = "1.0", features = ["serde_derive"], optional = true }
-coord_2d = "0.1"
+coord_2d = "0.2"

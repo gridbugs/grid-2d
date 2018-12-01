@@ -13,18 +13,26 @@ pub trait CoordSystem {
     /// Given a coord, returns the index of the backing Vec which
     /// corresponds to that coordinate. May assume that
     /// `coord.is_valid(self.size())`.
-    fn index(&self, coord: Coord) -> usize;
+    fn index_of_coord_unchecked(&self, coord: Coord) -> usize;
 
-    fn index_valid(&self, coord: Coord) -> Option<usize> {
+    fn index_of_coord_checked(&self, coord: Coord) -> usize {
         if coord.is_valid(self.size()) {
-            Some(self.index(coord))
+            self.index_of_coord_unchecked(coord)
+        } else {
+            panic!("coord out of bounds");
+        }
+    }
+
+    fn index_of_coord(&self, coord: Coord) -> Option<usize> {
+        if coord.is_valid(self.size()) {
+            Some(self.index_of_coord_unchecked(coord))
         } else {
             None
         }
     }
 
-    fn index_normalized(&self, coord: Coord) -> usize {
-        self.index(coord.normalize(self.size()))
+    fn index_of_normalized_coord(&self, coord: Coord) -> usize {
+        self.index_of_coord_unchecked(coord.normalize(self.size()))
     }
 
     /// Returns an iterator over coords
@@ -36,7 +44,7 @@ pub trait CoordSystem {
 pub fn validate<C: CoordSystem>(coord_system: &C) {
     let indices = coord_system
         .coord_iter()
-        .map(|coord| coord_system.index(coord))
+        .map(|coord| coord_system.index_of_coord_unchecked(coord))
         .collect::<Vec<_>>();
     let expected_indices = (0..coord_system.size().count()).collect::<Vec<_>>();
     if indices != expected_indices {
@@ -65,8 +73,8 @@ pub struct XThenYIter {
     size: Size,
 }
 
-impl XThenYIter {
-    pub fn new(size: Size) -> Self {
+impl From<Size> for XThenYIter {
+    fn from(size: Size) -> Self {
         Self {
             size,
             coord: Coord { x: 0, y: 0 },
@@ -96,12 +104,12 @@ impl CoordSystem for XThenY {
         self.size
     }
 
-    fn index(&self, coord: Coord) -> usize {
+    fn index_of_coord_unchecked(&self, coord: Coord) -> usize {
         (coord.y as u32 * self.size.x() + coord.x as u32) as usize
     }
 
     fn coord_iter(&self) -> Self::CoordIter {
-        XThenYIter::new(self.size)
+        XThenYIter::from(self.size)
     }
 }
 
