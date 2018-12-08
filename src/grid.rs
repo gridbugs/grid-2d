@@ -98,10 +98,10 @@ impl<T, C: CoordSystem> Grid<T, C> {
             .index_of_coord(coord)
             .map(move |index| &mut self.cells[index])
     }
-    pub fn tiled_get(&self, coord: Coord) -> &T {
+    pub fn get_tiled(&self, coord: Coord) -> &T {
         &self.cells[self.coord_system.index_of_normalized_coord(coord)]
     }
-    pub fn tiled_get_mut(&mut self, coord: Coord) -> &mut T {
+    pub fn get_tiled_mut(&mut self, coord: Coord) -> &mut T {
         let index = self.coord_system.index_of_normalized_coord(coord);
         &mut self.cells[index]
     }
@@ -161,9 +161,9 @@ mod tests {
     #[test]
     fn tiling() {
         let mut grid = coord_grid(Size::new(2, 3));
-        assert_eq!(*grid.tiled_get(Coord::new(-10, -30)), Coord::new(0, 0));
-        *grid.tiled_get_mut(Coord::new(-12, -12)) = Coord::new(1000, 1000);
-        assert_eq!(*grid.tiled_get(Coord::new(10, 30)), Coord::new(1000, 1000));
+        assert_eq!(*grid.get_tiled(Coord::new(-10, -30)), Coord::new(0, 0));
+        *grid.get_tiled_mut(Coord::new(-12, -12)) = Coord::new(1000, 1000);
+        assert_eq!(*grid.get_tiled(Coord::new(10, 30)), Coord::new(1000, 1000));
     }
 
     #[test]
