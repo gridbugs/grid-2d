@@ -1,13 +1,16 @@
 [package]
 name = "grid_2d"
 description = "A general purpose 2d grid"
-version = "0.11.1"
+version = "0.11.2"
 authors = ["Stephen Sherratt <sfsherratt@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/stevebob/grid-2d.git"
 repository = "https://github.com/stevebob/grid-2d.git"
 documentation = "https://docs.rs/grid_2d"
+
+[features]
+serialize = ["serde", "coord_2d/serde"]
 
 [dependencies]
 serde = { version = "1.0", features = ["serde_derive"], optional = true }

@@ -9,7 +9,7 @@ pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridEnumerate<'a, C, T> = iter::Zip<C, GridIter<'a, T>>;
 pub type GridEnumerateMut<'a, C, T> = iter::Zip<C, GridIterMut<'a, T>>;
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct Grid<T, C: CoordSystem = XThenY> {
     coord_system: C,

@@ -55,7 +55,7 @@ pub fn validate<C: CoordSystem>(coord_system: &C) {
 /// `CoordSystem` which starts in the top-left corner and traverses
 /// each row from top to bottom, traversing from left to right
 /// within each row.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct XThenY {
     size: Size,
