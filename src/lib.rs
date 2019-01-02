@@ -7,3 +7,4 @@ pub mod coord_system;
 mod grid;
 
 pub use self::grid::*;
+pub use coord_2d::{Coord, Size};
