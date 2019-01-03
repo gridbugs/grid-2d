@@ -6,8 +6,8 @@ use std::slice;
 
 pub type GridIter<'a, T> = slice::Iter<'a, T>;
 pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
-pub type GridEnumerate<'a, C, T> = iter::Zip<C, GridIter<'a, T>>;
-pub type GridEnumerateMut<'a, C, T> = iter::Zip<C, GridIterMut<'a, T>>;
+pub type GridEnumerate<'a, T, C = XThenYIter> = iter::Zip<C, GridIter<'a, T>>;
+pub type GridEnumerateMut<'a, T, C = XThenYIter> = iter::Zip<C, GridIterMut<'a, T>>;
 
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -122,10 +122,10 @@ impl<T, C: CoordSystem> Grid<T, C> {
         let index = self.coord_system.index_of_coord_checked(coord);
         self.cells.index_mut(index)
     }
-    pub fn enumerate(&self) -> GridEnumerate<C::CoordIter, T> {
+    pub fn enumerate(&self) -> GridEnumerate<T, C::CoordIter> {
         self.coord_iter().zip(self.iter())
     }
-    pub fn enumerate_mut(&mut self) -> GridEnumerateMut<C::CoordIter, T> {
+    pub fn enumerate_mut(&mut self) -> GridEnumerateMut<T, C::CoordIter> {
         self.coord_iter().zip(self.iter_mut())
     }
 }
