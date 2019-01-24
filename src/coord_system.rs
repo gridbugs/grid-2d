@@ -79,12 +79,18 @@ pub struct XThenYIter {
     size: Size,
 }
 
-impl From<Size> for XThenYIter {
-    fn from(size: Size) -> Self {
+impl XThenYIter {
+    pub fn new(size: Size) -> Self {
         Self {
             size,
             coord: Coord { x: 0, y: 0 },
         }
+    }
+}
+
+impl From<Size> for XThenYIter {
+    fn from(size: Size) -> Self {
+        Self::new(size)
     }
 }
 
