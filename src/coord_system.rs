@@ -61,9 +61,15 @@ pub struct XThenY {
     size: Size,
 }
 
+impl XThenY {
+    pub fn new(size: Size) -> Self {
+        Self { size }
+    }
+}
+
 impl From<Size> for XThenY {
     fn from(size: Size) -> Self {
-        Self { size }
+        Self::new(size)
     }
 }
 
