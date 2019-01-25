@@ -3,11 +3,14 @@ use coord_system::*;
 use std::iter;
 use std::ops::{Index, IndexMut};
 use std::slice;
+use std::vec;
 
 pub type GridIter<'a, T> = slice::Iter<'a, T>;
 pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridEnumerate<'a, T, C = XThenYIter> = iter::Zip<C, GridIter<'a, T>>;
 pub type GridEnumerateMut<'a, T, C = XThenYIter> = iter::Zip<C, GridIterMut<'a, T>>;
+pub type GridIntoIter<T> = vec::IntoIter<T>;
+pub type GridIntoEnumerate<T, C = XThenYIter> = iter::Zip<C, GridIntoIter<T>>;
 
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -33,6 +36,18 @@ impl<T, C: CoordSystem> Grid<T, C> {
             grid.cells.push(f(coord));
         }
         grid
+    }
+
+    pub fn new_fn_move_map_with_coord_system<F, U, D>(
+        coord_system: C,
+        grid: Grid<U, D>,
+        mut f: F,
+    ) -> Self
+    where
+        F: FnMut(Coord, U) -> T,
+        D: CoordSystem,
+    {
+        unimplemented!()
     }
 }
 impl<T: Clone, C: CoordSystem> Grid<T, C> {
@@ -128,18 +143,29 @@ impl<T, C: CoordSystem> Grid<T, C> {
     pub fn enumerate_mut(&mut self) -> GridEnumerateMut<T, C::CoordIter> {
         self.coord_iter().zip(self.iter_mut())
     }
+    pub fn into_enumerate(self) -> GridIntoEnumerate<T, C::CoordIter> {
+        self.coord_iter().zip(self.into_iter())
+    }
 }
 
-impl<T> Index<usize> for Grid<T> {
+impl<T, C: CoordSystem> Index<usize> for Grid<T, C> {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
         self.cells.index(index)
     }
 }
 
-impl<T> IndexMut<usize> for Grid<T> {
+impl<T, C: CoordSystem> IndexMut<usize> for Grid<T, C> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         self.cells.index_mut(index)
+    }
+}
+
+impl<T, C: CoordSystem> IntoIterator for Grid<T, C> {
+    type Item = T;
+    type IntoIter = GridIntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.cells.into_iter()
     }
 }
 
