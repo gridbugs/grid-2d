@@ -12,6 +12,9 @@ pub type GridEnumerateMut<'a, T, C = XThenYIter> = iter::Zip<C, GridIterMut<'a, 
 pub type GridIntoIter<T> = vec::IntoIter<T>;
 pub type GridIntoEnumerate<T, C = XThenYIter> = iter::Zip<C, GridIntoIter<T>>;
 
+#[derive(Debug, Clone, Copy)]
+pub struct IteratorLengthDifferentFromSize;
+
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct Grid<T, C: CoordSystem = XThenY> {
@@ -38,16 +41,56 @@ impl<T, C: CoordSystem> Grid<T, C> {
         grid
     }
 
-    pub fn new_fn_move_map_with_coord_system<F, U, D>(
+    pub fn try_new_iterator<I>(
         coord_system: C,
-        grid: Grid<U, D>,
-        mut f: F,
-    ) -> Self
+        iterator: I,
+    ) -> Result<Self, IteratorLengthDifferentFromSize>
+    where
+        I: Iterator<Item = T>,
+    {
+        let cells: Vec<T> = iterator.collect();
+        if cells.len() != coord_system.size().count() {
+            return Err(IteratorLengthDifferentFromSize);
+        }
+        Ok(Self {
+            coord_system,
+            cells,
+        })
+    }
+
+    pub fn new_iterator<I>(coord_system: C, iterator: I) -> Self
+    where
+        I: Iterator<Item = T>,
+    {
+        Self::try_new_iterator(coord_system, iterator).unwrap()
+    }
+
+    pub fn new_grid_map_with_coord<U, F>(grid: Grid<U, C>, mut f: F) -> Self
     where
         F: FnMut(Coord, U) -> T,
-        D: CoordSystem,
     {
-        unimplemented!()
+        let Grid {
+            coord_system,
+            cells,
+        } = grid;
+        let coord_iter = coord_system.coord_iter();
+        Self::new_iterator(
+            coord_system,
+            coord_iter
+                .zip(cells.into_iter())
+                .map(|(coord, u)| f(coord, u)),
+        )
+    }
+
+    pub fn new_grid_map<U, F>(grid: Grid<U, C>, f: F) -> Self
+    where
+        F: FnMut(U) -> T,
+    {
+        let Grid {
+            coord_system,
+            cells,
+        } = grid;
+        Self::new_iterator(coord_system, cells.into_iter().map(f))
     }
 }
 impl<T: Clone, C: CoordSystem> Grid<T, C> {
