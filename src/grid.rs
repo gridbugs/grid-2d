@@ -93,6 +93,21 @@ impl<T, C: CoordSystem> Grid<T, C> {
         Self::new_iterator(coord_system, cells.into_iter().map(f))
     }
 }
+
+impl<T, C: CoordSystem + Clone> Grid<T, C> {
+    pub fn new_grid_map_ref<U, F>(grid: &Grid<U, C>, f: F) -> Self
+    where
+        F: FnMut(&U) -> T,
+    {
+        let cells = grid.iter().map(f).collect();
+        let coord_system = grid.coord_system.clone();
+        Self {
+            cells,
+            coord_system,
+        }
+    }
+}
+
 impl<T: Clone, C: CoordSystem> Grid<T, C> {
     pub fn new_clone_with_coord_system(coord_system: C, value: T) -> Self {
         Grid::new_fn_with_coord_system(coord_system, |_| value.clone())
