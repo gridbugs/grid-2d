@@ -106,6 +106,21 @@ impl<T, C: CoordSystem + Clone> Grid<T, C> {
             coord_system,
         }
     }
+
+    pub fn new_grid_map_ref_with_coord<U, F>(grid: &Grid<U, C>, mut f: F) -> Self
+    where
+        F: FnMut(Coord, &U) -> T,
+    {
+        let cells = grid
+            .coord_iter()
+            .zip(grid.iter())
+            .map(|(coord, cell)| f(coord, cell))
+            .collect();
+        Self {
+            cells,
+            coord_system: grid.coord_system.clone(),
+        }
+    }
 }
 
 impl<T: Clone, C: CoordSystem> Grid<T, C> {
