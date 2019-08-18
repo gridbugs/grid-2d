@@ -15,6 +15,8 @@ pub type GridEnumerate<'a, T> = iter::Zip<CoordIter, GridIter<'a, T>>;
 pub type GridEnumerateMut<'a, T> = iter::Zip<CoordIter, GridIterMut<'a, T>>;
 pub type GridIntoIter<T> = vec::IntoIter<T>;
 pub type GridIntoEnumerate<T> = iter::Zip<CoordIter, GridIntoIter<T>>;
+pub type GridRows<'a, T> = slice::Chunks<'a, T>;
+pub type GridRowsMut<'a, T> = slice::ChunksMut<'a, T>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct IteratorLengthDifferentFromSize;
@@ -36,12 +38,12 @@ impl CoordIter {
 impl Iterator for CoordIter {
     type Item = Coord;
     fn next(&mut self) -> Option<Self::Item> {
-        if self.coord.y == self.size.y() as i32 {
+        if self.coord.y == self.size.height() as i32 {
             return None;
         }
         let coord = self.coord;
         self.coord.x += 1;
-        if self.coord.x == self.size.x() as i32 {
+        if self.coord.x == self.size.width() as i32 {
             self.coord.x = 0;
             self.coord.y += 1;
         }
@@ -231,6 +233,12 @@ impl<T> Grid<T> {
     }
     pub fn into_enumerate(self) -> GridIntoEnumerate<T> {
         self.coord_iter().zip(self.cells.into_iter())
+    }
+    pub fn rows(&self) -> GridRows<T> {
+        self.cells.chunks(self.size.width() as usize)
+    }
+    pub fn rows_mut(&mut self) -> GridRowsMut<T> {
+        self.cells.chunks_mut(self.size.width() as usize)
     }
 }
 
