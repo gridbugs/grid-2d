@@ -240,11 +240,26 @@ impl<T> Grid<T> {
     pub fn rows_mut(&mut self) -> GridRowsMut<T> {
         self.cells.chunks_mut(self.size.width() as usize)
     }
+    pub fn get2_checked_mut(&mut self, a: Coord, b: Coord) -> (&mut T, &mut T) {
+        if a == b {
+            panic!("coords may not be equal");
+        }
+        let index_a = self.index_of_coord_checked(a);
+        let index_b = self.index_of_coord_checked(b);
+        if index_a < index_b {
+            let (slice_a, slice_b) = self.cells.split_at_mut(index_b);
+            (&mut slice_a[index_a], &mut slice_b[0])
+        } else {
+            let (slice_b, slice_a) = self.cells.split_at_mut(index_a);
+            (&mut slice_a[0], &mut slice_b[index_b])
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::mem;
 
     fn coord_grid(size: Size) -> Grid<Coord> {
         Grid::new_fn(size, |coord| coord)
@@ -283,5 +298,21 @@ mod tests {
         assert_eq!(index, 26);
         *grid.get_index_checked_mut(index) = Coord::new(1000, 1000);
         assert_eq!(*grid.get_index_checked(index), Coord::new(1000, 1000));
+    }
+
+    #[test]
+    fn get2_checked_mut() {
+        let mut grid = coord_grid(Size::new(4, 4));
+        let (a, b) = grid.get2_checked_mut(Coord::new(1, 2), Coord::new(2, 1));
+        mem::swap(a, b);
+        assert_eq!(*grid.get_checked(Coord::new(1, 2)), Coord::new(2, 1));
+        assert_eq!(*grid.get_checked(Coord::new(2, 1)), Coord::new(1, 2));
+    }
+
+    #[test]
+    #[should_panic]
+    fn get2_checked_mut_equal_coords() {
+        let mut grid = coord_grid(Size::new(4, 4));
+        let (_, _) = grid.get2_checked_mut(Coord::new(1, 2), Coord::new(1, 2));
     }
 }
