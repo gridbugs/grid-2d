@@ -51,6 +51,13 @@ impl Iterator for CoordIter {
     }
 }
 
+#[derive(Debug)]
+pub enum Get2Error {
+    CoordsEqual,
+    LeftOutOfBounds,
+    RightOutOfBounds,
+}
+
 #[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 #[derive(Debug, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct Grid<T> {
@@ -239,6 +246,20 @@ impl<T> Grid<T> {
     }
     pub fn rows_mut(&mut self) -> GridRowsMut<T> {
         self.cells.chunks_mut(self.size.width() as usize)
+    }
+    pub fn get2_mut(&mut self, a: Coord, b: Coord) -> Result<(&mut T, &mut T), Get2Error> {
+        if a == b {
+            return Err(Get2Error::CoordsEqual);
+        }
+        let index_a = self.index_of_coord(a).ok_or(Get2Error::LeftOutOfBounds)?;
+        let index_b = self.index_of_coord(b).ok_or(Get2Error::LeftOutOfBounds)?;
+        if index_a < index_b {
+            let (slice_a, slice_b) = self.cells.split_at_mut(index_b);
+            Ok((&mut slice_a[index_a], &mut slice_b[0]))
+        } else {
+            let (slice_b, slice_a) = self.cells.split_at_mut(index_a);
+            Ok((&mut slice_a[0], &mut slice_b[index_b]))
+        }
     }
     pub fn get2_checked_mut(&mut self, a: Coord, b: Coord) -> (&mut T, &mut T) {
         if a == b {
