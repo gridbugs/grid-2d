@@ -173,9 +173,6 @@ impl<T> Grid<T> {
     pub fn size(&self) -> Size {
         self.size
     }
-    pub fn len(&self) -> usize {
-        self.size.count()
-    }
     pub fn iter(&self) -> GridIter<T> {
         self.cells.iter()
     }
