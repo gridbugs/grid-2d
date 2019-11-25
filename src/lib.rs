@@ -272,6 +272,12 @@ impl<T> Grid<T> {
             (&mut slice_a[0], &mut slice_b[index_b])
         }
     }
+    pub fn raw(&self) -> &[T] {
+        &self.cells
+    }
+    pub fn raw_mut(&mut self) -> &mut [T] {
+        &mut self.cells
+    }
 }
 
 #[cfg(test)]
