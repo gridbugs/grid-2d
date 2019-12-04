@@ -8,6 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/stevebob/grid-2d.git"
 repository = "https://github.com/stevebob/grid-2d.git"
 documentation = "https://docs.rs/grid_2d"
+edition = "2018"
 
 [features]
 serialize = ["serde", "coord_2d/serialize"]

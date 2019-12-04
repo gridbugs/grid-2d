@@ -1,9 +1,6 @@
-#[cfg(feature = "serialize")]
-#[macro_use]
-extern crate serde;
-extern crate coord_2d;
-
 pub use coord_2d::{Coord, Size};
+#[cfg(feature = "serialize")]
+use serde::{Deserialize, Serialize};
 use std::iter;
 use std::ops::{Index, IndexMut};
 use std::slice;
