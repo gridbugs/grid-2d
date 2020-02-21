@@ -1,4 +1,4 @@
-pub use coord_2d::{Coord, Size};
+pub use coord_2d::{self, Coord, Size};
 #[cfg(feature = "serialize")]
 use serde::{Deserialize, Serialize};
 use std::iter;
