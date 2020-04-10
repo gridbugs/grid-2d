@@ -63,22 +63,16 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-    fn new_uninitialised(size: Size) -> Self {
-        Self {
-            cells: Vec::with_capacity(size.count()),
-            size,
-        }
-    }
-
     pub fn new_fn<F>(size: Size, mut f: F) -> Self
     where
         F: FnMut(Coord) -> T,
     {
-        let mut grid = Grid::new_uninitialised(size);
+        let count = size.count();
+        let mut cells = Vec::with_capacity(count);
         for coord in CoordIter::new(size) {
-            grid.cells.push(f(coord));
+            cells.push(f(coord));
         }
-        grid
+        Self { cells, size }
     }
 
     pub fn try_new_iterator<I>(
@@ -150,13 +144,28 @@ impl<T> Grid<T> {
 
 impl<T: Clone> Grid<T> {
     pub fn new_clone(size: Size, value: T) -> Self {
-        Grid::new_fn(size, |_| value.clone())
+        let count = size.count();
+        let mut cells = Vec::with_capacity(count);
+        cells.resize(count, value);
+        Self { cells, size }
+    }
+}
+
+impl<T: Copy> Grid<T> {
+    pub fn new_copy(size: Size, value: T) -> Self {
+        let count = size.count();
+        let mut cells = Vec::with_capacity(count);
+        cells.resize_with(count, || value);
+        Self { cells, size }
     }
 }
 
 impl<T: Default> Grid<T> {
     pub fn new_default(size: Size) -> Self {
-        Grid::new_fn(size, |_| T::default())
+        let count = size.count();
+        let mut cells = Vec::new();
+        cells.resize_with(count, Default::default);
+        Self { cells, size }
     }
 }
 
