@@ -6,6 +6,7 @@ use std::ops::{Index, IndexMut};
 use std::slice;
 use std::vec;
 
+pub type CoordIter = coord_2d::CoordIterRowMajor;
 pub type GridIter<'a, T> = slice::Iter<'a, T>;
 pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridEnumerate<'a, T> = iter::Zip<CoordIter, GridIter<'a, T>>;
@@ -17,36 +18,6 @@ pub type GridRowsMut<'a, T> = slice::ChunksMut<'a, T>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct IteratorLengthDifferentFromSize;
-
-pub struct CoordIter {
-    coord: Coord,
-    size: Size,
-}
-
-impl CoordIter {
-    pub fn new(size: Size) -> Self {
-        Self {
-            size,
-            coord: Coord { x: 0, y: 0 },
-        }
-    }
-}
-
-impl Iterator for CoordIter {
-    type Item = Coord;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.coord.y == self.size.height() as i32 {
-            return None;
-        }
-        let coord = self.coord;
-        self.coord.x += 1;
-        if self.coord.x == self.size.width() as i32 {
-            self.coord.x = 0;
-            self.coord.y += 1;
-        }
-        Some(coord)
-    }
-}
 
 #[derive(Debug)]
 pub enum Get2Error {
@@ -69,7 +40,7 @@ impl<T> Grid<T> {
     {
         let count = size.count();
         let mut cells = Vec::with_capacity(count);
-        for coord in CoordIter::new(size) {
+        for coord in size.coord_iter_row_major() {
             cells.push(f(coord));
         }
         Self { cells, size }
@@ -101,7 +72,8 @@ impl<T> Grid<T> {
         F: FnMut(Coord, U) -> T,
     {
         let size = grid.size;
-        let cells = CoordIter::new(size)
+        let cells = size
+            .coord_iter_row_major()
             .zip(grid.cells.into_iter())
             .map(|(coord, u)| f(coord, u))
             .collect();
@@ -189,7 +161,7 @@ impl<T> Grid<T> {
         self.cells.iter_mut()
     }
     pub fn coord_iter(&self) -> CoordIter {
-        CoordIter::new(self.size)
+        self.size.coord_iter_row_major()
     }
     pub fn get(&self, coord: Coord) -> Option<&T> {
         self.index_of_coord(coord).map(|index| &self.cells[index])
