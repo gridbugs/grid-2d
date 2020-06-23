@@ -67,6 +67,15 @@ impl<T> Grid<T> {
         Self::try_new_iterator(size, iterator).unwrap()
     }
 
+    pub fn new_grid_map<U, F>(grid: Grid<U>, f: F) -> Self
+    where
+        F: FnMut(U) -> T,
+    {
+        let size = grid.size;
+        let cells = grid.cells.into_iter().map(f).collect();
+        Self { cells, size }
+    }
+
     pub fn new_grid_map_with_coord<U, F>(grid: Grid<U>, mut f: F) -> Self
     where
         F: FnMut(Coord, U) -> T,
@@ -77,15 +86,6 @@ impl<T> Grid<T> {
             .zip(grid.cells.into_iter())
             .map(|(coord, u)| f(coord, u))
             .collect();
-        Self { cells, size }
-    }
-
-    pub fn new_grid_map<U, F>(grid: Grid<U>, f: F) -> Self
-    where
-        F: FnMut(U) -> T,
-    {
-        let size = grid.size;
-        let cells = grid.cells.into_iter().map(f).collect();
         Self { cells, size }
     }
 
@@ -258,6 +258,18 @@ impl<T> Grid<T> {
     }
     pub fn raw_mut(&mut self) -> &mut [T] {
         &mut self.cells
+    }
+    pub fn map<U, F: FnMut(T) -> U>(self, f: F) -> Grid<U> {
+        Grid::new_grid_map(self, f)
+    }
+    pub fn map_with_coord<U, F: FnMut(Coord, T) -> U>(self, f: F) -> Grid<U> {
+        Grid::new_grid_map_with_coord(self, f)
+    }
+    pub fn map_ref<U, F: FnMut(&T) -> U>(&self, f: F) -> Grid<U> {
+        Grid::new_grid_map_ref(self, f)
+    }
+    pub fn map_ref_with_coord<U, F: FnMut(Coord, &T) -> U>(&self, f: F) -> Grid<U> {
+        Grid::new_grid_map_ref_with_coord(self, f)
     }
 }
 
