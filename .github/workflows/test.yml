@@ -12,4 +12,6 @@ jobs:
       with:
         rust-version: ${{ matrix.rust }}
     - uses: actions/checkout@master
-    - run: cargo test
+    - run: |
+        cargo test
+        cargo test --all-features
