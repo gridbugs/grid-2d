@@ -5,8 +5,8 @@ version = "0.15.0"
 authors = ["Stephen Sherratt <sfsherratt@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/stevebob/grid-2d.git"
-repository = "https://github.com/stevebob/grid-2d.git"
+homepage = "https://github.com/gridbugs/grid-2d.git"
+repository = "https://github.com/gridbugs/grid-2d.git"
 documentation = "https://docs.rs/grid_2d"
 edition = "2018"
 
