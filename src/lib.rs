@@ -121,6 +121,12 @@ impl<T: Clone> Grid<T> {
         cells.resize(count, value);
         Self { cells, size }
     }
+
+    pub fn transpose_clone(&self) -> Self {
+        Self::new_fn(self.size.transpose(), |coord| {
+            self.get_checked(coord.transpose()).clone()
+        })
+    }
 }
 
 impl<T: Copy> Grid<T> {
