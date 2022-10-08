@@ -2,11 +2,13 @@ pub use coord_2d::{self, Coord, Size};
 #[cfg(feature = "serialize")]
 use serde::{Deserialize, Serialize};
 use std::iter;
+use std::marker::PhantomData;
 use std::ops::{Index, IndexMut};
 use std::slice;
 use std::vec;
 
 pub type CoordIter = coord_2d::CoordIterRowMajor;
+pub type EdgeCoordIter = coord_2d::EdgeIter;
 pub type GridIter<'a, T> = slice::Iter<'a, T>;
 pub type GridIterMut<'a, T> = slice::IterMut<'a, T>;
 pub type GridEnumerate<'a, T> = iter::Zip<CoordIter, GridIter<'a, T>>;
@@ -15,6 +17,8 @@ pub type GridIntoIter<T> = vec::IntoIter<T>;
 pub type GridIntoEnumerate<T> = iter::Zip<CoordIter, GridIntoIter<T>>;
 pub type GridRows<'a, T> = slice::Chunks<'a, T>;
 pub type GridRowsMut<'a, T> = slice::ChunksMut<'a, T>;
+pub type GridEdgeEnumerate<'a, T> = iter::Zip<EdgeCoordIter, GridEdgeIter<'a, T>>;
+pub type GridEdgeEnumerateMut<'a, T> = iter::Zip<EdgeCoordIter, GridEdgeIterMut<'a, T>>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct IteratorLengthDifferentFromSize;
@@ -276,6 +280,67 @@ impl<T> Grid<T> {
     }
     pub fn map_ref_with_coord<U, F: FnMut(Coord, &T) -> U>(&self, f: F) -> Grid<U> {
         Grid::new_grid_map_ref_with_coord(self, f)
+    }
+    pub fn is_on_edge(&self, coord: Coord) -> bool {
+        self.size.is_on_edge(coord)
+    }
+    pub fn edge_coord_iter(&self) -> EdgeCoordIter {
+        self.size.edge_iter()
+    }
+    pub fn edge_iter(&self) -> GridEdgeIter<T> {
+        GridEdgeIter {
+            edge_coord_iter: self.edge_coord_iter(),
+            grid: self,
+        }
+    }
+    pub fn edge_iter_mut(&mut self) -> GridEdgeIterMut<T> {
+        GridEdgeIterMut {
+            edge_coord_iter: self.edge_coord_iter(),
+            grid: self,
+            marker: PhantomData,
+        }
+    }
+    pub fn edge_enumerate(&self) -> GridEdgeEnumerate<T> {
+        self.edge_coord_iter().zip(self.edge_iter())
+    }
+    pub fn edge_enumerate_mut(&mut self) -> GridEdgeEnumerateMut<T> {
+        self.edge_coord_iter().zip(self.edge_iter_mut())
+    }
+}
+
+pub struct GridEdgeIter<'a, T> {
+    edge_coord_iter: EdgeCoordIter,
+    grid: &'a Grid<T>,
+}
+
+impl<'a, T> Iterator for GridEdgeIter<'a, T> {
+    type Item = &'a T;
+    fn next<'b>(&'b mut self) -> Option<Self::Item> {
+        self.edge_coord_iter
+            .next()
+            .map(|coord| self.grid.get_checked(coord))
+    }
+}
+
+pub struct GridEdgeIterMut<'a, T> {
+    edge_coord_iter: EdgeCoordIter,
+    grid: *mut Grid<T>,
+    marker: PhantomData<&'a mut T>,
+}
+
+impl<'a, T> Iterator for GridEdgeIterMut<'a, T> {
+    type Item = &'a mut T;
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(coord) = self.edge_coord_iter.next() {
+            // SAFETY: The compiler doesn't know that the `EdgeCoordIter` iterator only visits each
+            // coordinate at most once. If this iterator yielded the same coordinate twice, then
+            // the `EdgeIterMut` iterator could give out multiple mutable references to the same
+            // cell of the grid.
+            let value = unsafe { (&mut *self.grid).get_checked_mut(coord) };
+            Some(value)
+        } else {
+            None
+        }
     }
 }
 
