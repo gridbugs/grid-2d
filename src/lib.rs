@@ -347,6 +347,34 @@ impl<'a, T> Iterator for GridEdgeIterMut<'a, T> {
     }
 }
 
+impl<T> Index<ICoord> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: ICoord) -> &Self::Output {
+        self.get_checked(index)
+    }
+}
+
+impl<T> IndexMut<ICoord> for Grid<T> {
+    fn index_mut(&mut self, index: ICoord) -> &mut Self::Output {
+        self.get_checked_mut(index)
+    }
+}
+
+impl<T> Index<UCoord> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: UCoord) -> &Self::Output {
+        self.get_checked(index.to_icoord())
+    }
+}
+
+impl<T> IndexMut<UCoord> for Grid<T> {
+    fn index_mut(&mut self, index: UCoord) -> &mut Self::Output {
+        self.get_checked_mut(index.to_icoord())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
