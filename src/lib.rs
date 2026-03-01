@@ -204,7 +204,7 @@ impl<T> Grid<T> {
         if coord.is_valid(self.size) {
             self.index_of_coord_unchecked(coord)
         } else {
-            panic!("coord out of bounds");
+            panic!("coord {} out of bounds", coord);
         }
     }
     fn index_of_normalized_coord(&self, coord: ICoord) -> usize {
